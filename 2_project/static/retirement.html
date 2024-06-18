@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퇴직금 계산기</title>
+</head>
+<body>
+    <div class="nav-buttons">
+        <button onclick="location.href='/static/index.html'">월급 계산</button>
+        <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        <button onclick="location.href='/static/unemployment.html'">실업급여 계산</button>
+    </div>
+
+    <h3>퇴직금 계산</h3>
+    <form id="retirementForm">
+        <label for="startDate">입사일:</label>
+        <input type="date" id="startDate" name="startDate" required><span>&nbsp;~</span>
+        <label for="endDate">퇴사일:</label>
+        <input type="date" id="endDate" name="endDate" required><br><br>
+        <label for="salaryTotal">3개월 급여 총액:</label>
+        <input type="number" id="salaryTotal" name="salaryTotal"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <label for="annualBonus">연간 상여금 총액:</label>
+        <input type="number" id="annualBonus" name="annualBonus"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <label for="annualLeavePay">연차 수당:</label>
+        <input type="number" id="annualLeavePay" name="annualLeavePay"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <button type="button" onclick="calculateRetirementPay()">계산하기</button><br><br>
+        <a href="https://www.moel.go.kr/retirementpay.do">퇴직연금계산</a>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        function clearDefault(element) {
+            if (element.value == element.defaultValue) {
+                element.value = '';
+            }
+        }
+
+        function restoreDefault(element, defaultValue) {
+            if (element.value == '') {
+                element.value = defaultValue;
+            }
+        }
+
+        function calculateDaysBetween(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000; // 하루 초 단위
+            const firstDate = new Date(date1);
+            const secondDate = new Date(date2);
+            return Math.round(Math.abs((secondDate - firstDate) / oneDay));
+        }
+
+        function calculateDaysInLast3Months(endDate) {
+            const end = new Date(endDate);
+            const start = new Date(endDate);
+            start.setMonth(end.getMonth() - 3);
+
+            return calculateDaysBetween(start, end);
+        }
+
+        async function calculateRetirementPay() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const salaryTotal = parseFloat(document.getElementById('salaryTotal').value);
+            const annualBonus = parseFloat(document.getElementById('annualBonus').value);
+            const annualLeavePay = parseFloat(document.getElementById('annualLeavePay').value);
+
+            const daysWorked = calculateDaysBetween(startDate, endDate);
+            const daysInLast3Months = calculateDaysInLast3Months(endDate);
+
+            const salary3Months = salaryTotal;
+            const bonus3Months = annualBonus * (3 / 12);
+            const leavePay3Months = annualLeavePay * (3 / 12);
+
+            const totalSalary = salary3Months + bonus3Months + leavePay3Months;
+            const averageDailySalary = totalSalary / daysInLast3Months;
+
+            const retirementPay = Math.floor(averageDailySalary * 30 * (daysWorked / 365));
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>퇴직금 계산 결과</h3>
+                <p>총 근속 일수: ${daysWorked.toLocaleString()} 일</p>
+                <p>3개월 급여 총액: ${salaryTotal.toLocaleString()} 원</p>
+                <p>3개월 간 상여금 가산액: ${bonus3Months.toLocaleString()} 원</p>
+                <p>3개월 간 연차 수당 가산액: ${leavePay3Months.toLocaleString()} 원</p>
+                <p>평균 일급: ${Math.floor(averageDailySalary).toLocaleString()} 원</p>
+                <p>예상 퇴직금: ${retirementPay.toLocaleString()} 원</p>
+                <p>1년 이상 계속 근로한 경우에 지급됩니다. 회사마다 평균임금 및 통상임금 기준이 다르기 때문에 실제 퇴직금과는 차이가 있을 수 있습니다.</p>
+            `;
+        }
+    </script>
+</body>
+</html>

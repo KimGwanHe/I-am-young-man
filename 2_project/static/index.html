@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세금 계산기</title>
+</head>
+<body>
+    <div class="nav-buttons">
+        <button onclick="location.href='/static/index.html'">월급 계산</button>
+        <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        <button onclick="location.href='/static/unemployment.html'">실업급여 계산</button>
+    </div>
+
+    <h3>월급 계산</h3>
+    <form id="taxForm">
+        <label for="salary">기본급:</label>
+        <input type="number" id="salary" name="salary" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <label for="tax_Free">비과세액:</label>
+        <input type="number" id="tax_Free" name="tax_Free" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <label for="dependents">부양가족수(본인포함):</label>
+        <input type="number" id="dependents" name="dependents" value="1" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 1)">원<br><br>
+        <button type="button" onclick="calculateTax()">계산하기</button><br><br>
+        <a href="/tax.xlsx" download>세금 데이터 다운로드</a>
+        <a href="https://www.nps.or.kr/jsppage/main.jsp">NPS 국민연금</a>
+    </form>
+    <div id="result"></div>
+    
+    <script>
+        function clearDefault(element) {
+            if (element.value == element.defaultValue) {
+                element.value = '';
+            }
+        }
+
+        function restoreDefault(element, defaultValue) {
+            if (element.value == '') {
+                element.value = defaultValue;
+            }
+        }
+
+        // 팝업
+        function showTooltip(message, linkText, linkUrl) {
+            const tooltip = document.createElement('div');
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = '50%';
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translate(-50%, -50%)';
+            tooltip.style.padding = '20px';
+            tooltip.style.backgroundColor = 'white';
+            tooltip.style.border = '1px solid black';
+            tooltip.style.zIndex = '1000';
+            tooltip.style.width = '500px';
+            tooltip.style.maxWidth = '85%';
+            tooltip.innerHTML = `
+                <div>
+                    ${message}
+                    <p><a href="${linkUrl}" target="_blank">${linkText}</a></p>
+                    <button onclick="document.body.removeChild(this.parentElement.parentElement)">닫기</button>
+                </div>
+            `;
+            document.body.appendChild(tooltip);
+        }
+        
+        async function calculateTax() {
+            const salary = document.getElementById('salary').value;
+            const tax_Free = document.getElementById('tax_Free').value;
+            const dependents = document.getElementById('dependents').value;
+            
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `salary=${salary}&tax_Free=${tax_Free}&dependents=${dependents}`
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <h3>세금 결과</h3>
+                    <p>국민연금 (4.5%): ${data.national_pension} <button class="tooltip-button" onclick="showTooltip('<h3>국민연금에 대한 설명</h3><br>소개: 정부가 직접 운영하는 공적 연금 제도로, 국민 개개인이 소득 활동을 할 때 납부한 보험료를 기반으로 하여 나이가 들거나, 갑작스런 사고나 질병으로 사망 또는 장애를 입어 소득활동이 중단된 경우 본인이나 유족에게 연금을 지급함으로써 기본 생활을 유지할 수 있도록 하는 연금제도를 말한다. 국민연금은 공적 연금으로서 가입이 법적으로 의무화되어 있기 때문에 사(私)보험에 비해 관리운영비가 적게 소요되며, 관리운영비의 상당 부분이 국고에서 지원되므로 사보험처럼 영업 이익을 추구하지 않는다. 현행 국민연금 제도는 부담과 급여의 수준이 일정 기간 불완전 균형을 이루는 수정 적립 방식을 채택해 운용하고 있다.<br><br>대상: 18세 이상 60세 미만 국내 거주국민.<br>단, 공무원, 군인, 사립학교 교직원 제외.<br><br>보험료율: 기준소득월액 근로자:4.5%, 사업주:4.5%')">?</button></p>
+                    <p>건강보험 (3.545%): ${data.health_insurance} <button class="tooltip-button" onclick="showTooltip('건강보험에 대한 설명')">?</button></p>
+                    <p>장기요양보험 (건강보험료 12.95%): ${data.long_term_care_insurance} <button class="tooltip-button" onclick="showTooltip('장기요양보험에 대한 설명')">?</button></p>
+                    <p>고용보험 (0.9%): ${data.employment_insurance} <button class="tooltip-button" onclick="showTooltip('고용보험에 대한 설명')">?</button></p>
+                    <p>소득세 (간이세액): ${data.income_tax} <button class="tooltip-button" onclick="showTooltip('소득세에 대한 설명')">?</button></p>
+                    <p>지방소득세 (소득세 10%): ${data.local_income_tax} <button class="tooltip-button" onclick="showTooltip('지방소득세에 대한 설명')">?</button></p>
+                    <p>월 예상 실수령액: ${data.total_salary}</p>
+                    <p>산재보험은 전액 회사 부담이고, 국민연금의 근로자 최대 부담액은 265,500원입니다.</p>
+                `;
+            } else {
+                alert("Error: 세금을 계산하지 못했습니다.");
+            }
+        }
+    </script>
+</body>
+</html>
