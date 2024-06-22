@@ -4,22 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>세금 계산기</title>
+    <style>
+        body{
+            font-family: 'pretendard';
+            background-color: #F5F5F5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px 0;
+            margin-top: 15px;
+        }
+
+        .nav-buttons .top-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons button {
+            width: 155px;
+            background-color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin: 0 10px;
+            font-size: 15px;
+            color: #7471FF;
+            cursor: pointer;
+            border: 1px solid #ABA9FF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons button.active {
+            color: #7471FF;
+            border-color: #7471FF;
+            font-weight: bold;
+            border: 2px solid #4F46E5;
+            background-color: #e9fdff; /*여기 색 바꿔야해.*/
+        }
+
+        .nav-buttons button:hover {
+            background-color: #4F46E5;
+            color: white;
+        }
+
+        .title {
+            color: black;
+            font-weight: bold;
+            font-size: 20px;
+            /* justify-content: left; */
+        }
+
+        form {
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+            color: #808892;
+            margin-top: 10px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form input[type="number"] {
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 2px;
+            border: 1px solid #ABA9FF;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        form .currency {
+            margin-left: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form button {
+            width: 100%;
+            background-color: #88D3CE;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form button:hover {
+            background-color: #68b59d;
+        }
+
+        form a {
+            display: inline-block;
+            color: #7471FF;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 5px;
+            margin-left: 10%;
+        }
+
+        form a:hover {
+            text-decoration: underline;
+            color: #9f59dc;
+        }
+
+        #result {
+            padding: 10px;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        #result h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        #result p {
+            margin: 10px 0;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        #result .small{
+            font-size: 12px;
+        }
+
+        #result .pred{
+            font-size: 20px;
+            color: #7471FF;
+            font-weight: bold;
+        }
+
+        .tooltip-button {
+            background: rgb(230, 230, 230);
+            border: 1px solid black;
+            border-radius: 2px;
+            color: #4F46E5;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .tooltip-button:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="nav-buttons">
-        <button onclick="location.href='/static/index.html'">월급 계산</button>
-        <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        <div class="top-buttons">
+            <button onclick="location.href='/static/index.html'" class="active">월급 계산</button>
+            <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        </div>
         <button onclick="location.href='/static/unemployment.html'">실업급여 계산</button>
     </div>
 
-    <h3>월급 계산</h3>
+    <div><h3 class="title">월급 계산</h3></div>
     <form id="taxForm">
         <label for="salary">기본급:</label>
-        <input type="number" id="salary" name="salary" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="salary" name="salary" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <label for="tax_Free">비과세액:</label>
-        <input type="number" id="tax_Free" name="tax_Free" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="tax_Free" name="tax_Free" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <label for="dependents">부양가족수(본인포함):</label>
-        <input type="number" id="dependents" name="dependents" value="1" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 1)">원<br><br>
+        <input type="number" id="dependents" name="dependents" value="1" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 1)"><span class="currency">원</span><br><br>
         <button type="button" onclick="calculateTax()">계산하기</button><br><br>
         <a href="/tax.xlsx" download>세금 데이터 다운로드</a>
         <a href="https://www.nps.or.kr/jsppage/main.jsp">NPS 국민연금</a>
@@ -55,7 +217,6 @@
             tooltip.innerHTML = `
                 <div>
                     ${message}
-                    <p><a href="${linkUrl}" target="_blank">${linkText}</a></p>
                     <button onclick="document.body.removeChild(this.parentElement.parentElement)">닫기</button>
                 </div>
             `;
@@ -64,6 +225,10 @@
         
         async function calculateTax() {
             const salary = document.getElementById('salary').value;
+            if (salary == 0) {
+                alert('기본급을 입력해주세요.');
+                return;
+            }
             const tax_Free = document.getElementById('tax_Free').value;
             const dependents = document.getElementById('dependents').value;
             
@@ -86,8 +251,8 @@
                     <p>고용보험 (0.9%): ${data.employment_insurance} <button class="tooltip-button" onclick="showTooltip('고용보험에 대한 설명')">?</button></p>
                     <p>소득세 (간이세액): ${data.income_tax} <button class="tooltip-button" onclick="showTooltip('소득세에 대한 설명')">?</button></p>
                     <p>지방소득세 (소득세 10%): ${data.local_income_tax} <button class="tooltip-button" onclick="showTooltip('지방소득세에 대한 설명')">?</button></p>
-                    <p>월 예상 실수령액: ${data.total_salary}</p>
-                    <p>산재보험은 전액 회사 부담이고, 국민연금의 근로자 최대 부담액은 265,500원입니다.</p>
+                    <p class='pred'>월 예상 실수령액: ${data.total_salary}</p>
+                    <p class='small'>산재보험은 전액 회사 부담이고, 국민연금의 근로자 최대 부담액은 265,500원입니다.</p>
                 `;
             } else {
                 alert("Error: 세금을 계산하지 못했습니다.");

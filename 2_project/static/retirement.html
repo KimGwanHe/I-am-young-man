@@ -4,26 +4,217 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>퇴직금 계산기</title>
+    <style>
+        body{
+            font-family: 'pretendard';
+            background-color: #F5F5F5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px 0;
+            margin-top: 15px;
+        }
+
+        .nav-buttons .top-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons button {
+            width: 155px;
+            background-color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin: 0 10px;
+            font-size: 15px;
+            color: #7471FF;
+            cursor: pointer;
+            border: 1px solid #ABA9FF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons button.active {
+            color: #7471FF;
+            border-color: #7471FF;
+            font-weight: bold;
+            border: 2px solid #4F46E5;
+            background-color: #e9fdff; /*여기 색 바꿔야해.*/
+        }
+
+        .nav-buttons button:hover {
+            background-color: #4F46E5;
+            color: white;
+        }
+
+        .title {
+            color: black;
+            font-weight: bold;
+            font-size: 20px;
+            /* justify-content: left; */
+        }
+
+        form {
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+            color: #808892;
+            margin-top: 10px;
+        }
+
+        .Datestyle {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .Datestyle label {
+            margin-right: 10px;
+            margin-top: 5px;
+            white-space: nowrap;
+        }
+
+        .Datestyle input[type="date"] {
+            width: auto;
+            padding: 5px;
+            border: 1px solid #ababab;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .Datestyle span {
+            margin: 0 5px;
+            font-size: 14px;
+            color: #6b6b6b;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form input[type="number"] {
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 2px;
+            border: 1px solid #ABA9FF;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        form .currency {
+            margin-left: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form button {
+            width: 100%;
+            background-color: #88D3CE;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form button:hover {
+            background-color: #68b59d;
+        }
+
+        form a {
+            display: inline-block;
+            color: #7471FF;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 5px;
+            margin-left: 10%;
+        }
+
+        form a:hover {
+            text-decoration: underline;
+            color: #9f59dc;
+        }
+
+        #result {
+            padding: 10px;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        #result h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        #result p {
+            margin: 10px 0;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        #result .small{
+            font-size: 12px;
+        }
+
+        #result .pred{
+            font-size: 20px;
+            color: #7471FF;
+            font-weight: bold;
+        }
+
+        .tooltip-button {
+            background: rgb(230, 230, 230);
+            border: 1px solid black;
+            border-radius: 2px;
+            color: #4F46E5;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .tooltip-button:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="nav-buttons">
-        <button onclick="location.href='/static/index.html'">월급 계산</button>
-        <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        <div class="top-buttons">
+            <button onclick="location.href='/static/index.html'">월급 계산</button>
+            <button onclick="location.href='/static/retirement.html'" class="active">퇴직금 계산</button>
+        </div>
         <button onclick="location.href='/static/unemployment.html'">실업급여 계산</button>
     </div>
 
     <h3>퇴직금 계산</h3>
     <form id="retirementForm">
-        <label for="startDate">입사일:</label>
-        <input type="date" id="startDate" name="startDate" required><span>&nbsp;~</span>
-        <label for="endDate">퇴사일:</label>
-        <input type="date" id="endDate" name="endDate" required><br><br>
+        <div class="Datestyle">
+            <label for="startDate">입사일:</label>
+            <input type="date" id="startDate" name="startDate" required><span>&nbsp;~</span>
+            <label for="endDate">퇴사일:</label>
+            <input type="date" id="endDate" name="endDate" required></div><br><br>
         <label for="salaryTotal">3개월 급여 총액:</label>
-        <input type="number" id="salaryTotal" name="salaryTotal"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="salaryTotal" name="salaryTotal"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <label for="annualBonus">연간 상여금 총액:</label>
-        <input type="number" id="annualBonus" name="annualBonus"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="annualBonus" name="annualBonus"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <label for="annualLeavePay">연차 수당:</label>
-        <input type="number" id="annualLeavePay" name="annualLeavePay"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="annualLeavePay" name="annualLeavePay"  value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <button type="button" onclick="calculateRetirementPay()">계산하기</button><br><br>
         <a href="https://www.moel.go.kr/retirementpay.do">퇴직연금계산</a>
     </form>
@@ -59,8 +250,20 @@
 
         async function calculateRetirementPay() {
             const startDate = document.getElementById('startDate').value;
+            if (!startDate) {
+                alert('입사일을 입력해주세요.');
+                return;
+            }
             const endDate = document.getElementById('endDate').value;
+            if (!endDate) {
+                alert('퇴사일을 입력해주세요.');
+                return;
+            }
             const salaryTotal = parseFloat(document.getElementById('salaryTotal').value);
+            if (salaryTotal == 0) {
+                alert('3개월 급여 총액을 입력해주세요.');
+                return;
+            }
             const annualBonus = parseFloat(document.getElementById('annualBonus').value);
             const annualLeavePay = parseFloat(document.getElementById('annualLeavePay').value);
 
@@ -84,8 +287,8 @@
                 <p>3개월 간 상여금 가산액: ${bonus3Months.toLocaleString()} 원</p>
                 <p>3개월 간 연차 수당 가산액: ${leavePay3Months.toLocaleString()} 원</p>
                 <p>평균 일급: ${Math.floor(averageDailySalary).toLocaleString()} 원</p>
-                <p>예상 퇴직금: ${retirementPay.toLocaleString()} 원</p>
-                <p>1년 이상 계속 근로한 경우에 지급됩니다. 회사마다 평균임금 및 통상임금 기준이 다르기 때문에 실제 퇴직금과는 차이가 있을 수 있습니다.</p>
+                <p class='pred'>예상 퇴직금: ${retirementPay.toLocaleString()} 원</p>
+                <p class='small'>1년 이상 계속 근로한 경우에 지급됩니다. 회사마다 평균임금 및 통상임금 기준이 다르기 때문에 실제 퇴직금과는 차이가 있을 수 있습니다.</p>
             `;
         }
     </script>

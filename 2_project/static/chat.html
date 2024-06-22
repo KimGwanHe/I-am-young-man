@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅방</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'pretandard', sans-serif;
+        }
+
+        .container {
+            background-color: #F3F6FB;
+            padding: 10px;
+        }
+
+        header {
+            height: 50px;
+            background-color: white;
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 22px;
+            margin-top: 11px;
+        }
+
+        main {
+            background-color: #F3F6FB;
+        }
+
+        .title h3, .title h5 {
+            display: inline;
+            margin: 0;
+        }
+
+        .title h3 {
+            font-size: 23px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .title h5 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .title p {
+            font-size: 15px;
+            color: #808892;
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .buttons button {
+            background-color: white;
+            border: 1px solid #ABA9FF;
+            padding: 6px 47px;
+            margin: 0 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #ABA9FF;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .buttons button.active {
+            background-color: white;
+            border: 2px solid #7471FF;
+            color: #7471FF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        .chatbox {
+            height: 400px;
+        }
+
+        .bot {
+            position: relative;
+            background-color: #CCCBFF;
+            color: black;
+            width: 250px;
+            height: auto;
+            padding: 0.5px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            margin-left: 5%;
+        }
+
+        .bot:after {
+            content:""; position: absolute; top: 21px; left: -20px; border-right: 20px solid #CCCBFF; border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+        }
+
+        .user {
+            position: relative;
+            background-color: #7471FF;
+            color: white;
+            width: 250px;
+            height: auto;
+            padding: 0.5px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            margin-left: 27%;
+        }
+
+        .user:after {
+            content:""; position: absolute; top: 35px; right: -20px; border-left: 20px solid #7471FF; border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+        }
+
+        .chatbox p {
+            padding: 0 10px;
+        }
+
+        footer {
+            display: flex;
+            padding: 10px;
+            background-color: #DDE2EA;
+        }
+
+        .input-container {
+            display: flex;
+            border: 1px solid #CCCBFF;
+            border-radius: 18.5px;
+            overflow: hidden;
+            padding: 3px;
+            background-color: #fff;
+            box-shadow: inset 0 0 5px rgb(223, 223, 223);
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 5px;
+            border: none;
+            outline: none;
+            width: 310px;
+            margin-left: 5px;
+        }
+
+        .send-button {
+            background: none;
+            border: none;
+            padding: 0;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .send-button img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="./image/main_logo2.png" alt="Logo" class="logo">
+    </header>
+    <div class="container">
+        <main>
+            <div class="title">
+                <h3>AI 면접 도우미 서비스</h3>
+                <h5>입니다.</h5>
+                <p>AI가 질문을 드립니다.<br>해당 질문에 성실한 답변 부탁드립니다!</p>
+            </div>
+            <div class="buttons">
+                <button class="basic-question">기초 질문</button>
+                <button class="advanced-question">심화 질문</button>
+            </div>
+            <div class="chatbox">
+                <div class="bot">
+                    <p>간단한 자기소개를 해주세요.</p>
+                </div>
+                <div class="user">
+                    <p>안녕하세요! 나는청년 입니다. 면접을 위한 답변을 하겠습니다.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <div class="input-container">
+            <input type="text" placeholder="답변을 입력하세요." class="input-box">
+            <button class="send-button"><img src="./image/chat_button2.png" alt="chat_button"></button>
+        </div>
+    </footer>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.buttons button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            buttons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+</script>
+</html>

@@ -4,18 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실업급여 계산기</title>
+    <style>
+        body{
+            font-family: 'pretendard';
+            background-color: #F5F5F5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px 0;
+            margin-top: 15px;
+        }
+
+        .nav-buttons .top-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons button {
+            width: 155px;
+            background-color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin: 0 10px;
+            font-size: 15px;
+            color: #7471FF;
+            cursor: pointer;
+            border: 1px solid #ABA9FF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons button.active {
+            color: #7471FF;
+            border-color: #7471FF;
+            font-weight: bold;
+            border: 2px solid #4F46E5;
+            background-color: #e9fdff; /*여기 색 바꿔야해.*/
+        }
+
+        .nav-buttons button:hover {
+            background-color: #4F46E5;
+            color: white;
+        }
+
+        .title {
+            color: black;
+            font-weight: bold;
+            font-size: 20px;
+            /* justify-content: left; */
+        }
+
+        form {
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+            color: #808892;
+            margin-top: 10px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form input[type="number"] {
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 2px;
+            border: 1px solid #ABA9FF;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        form .currency {
+            margin-left: 5px;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        form button {
+            width: 100%;
+            background-color: #88D3CE;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form button:hover {
+            background-color: #68b59d;
+        }
+
+        form a {
+            display: inline-block;
+            color: #7471FF;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 5px;
+            margin-left: 10%;
+        }
+
+        form a:hover {
+            text-decoration: underline;
+            color: #9f59dc;
+        }
+
+        form select {
+            border-radius: 5px;
+            border: 1px solid rgb(172, 172, 172);
+            font-size: 12px;
+            padding: 5px;
+        }
+
+        #result {
+            padding: 10px;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        #result h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        #result p {
+            margin: 10px 0;
+            font-size: 15px;
+            color: #808892;
+        }
+
+        #result .small{
+            font-size: 12px;
+        }
+
+        #result .pred{
+            font-size: 20px;
+            color: #7471FF;
+            font-weight: bold;
+        }
+
+        .tooltip-button {
+            background: rgb(230, 230, 230);
+            border: 1px solid black;
+            border-radius: 2px;
+            color: #4F46E5;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .tooltip-button:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="nav-buttons">
-        <button onclick="location.href='/static/index.html'">월급 계산</button>
-        <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
-        <button onclick="location.href='/static/unemployment.html'">실업급여 계산</button>
+        <div class="top-buttons">
+            <button onclick="location.href='/static/index.html'">월급 계산</button>
+            <button onclick="location.href='/static/retirement.html'">퇴직금 계산</button>
+        </div>
+        <button onclick="location.href='/static/unemployment.html'" class="active">실업급여 계산</button>
     </div>
 
     <h3>실업급여 계산</h3>
     <form id="unemploymentForm">
         <label for="averageSalary">퇴직전 3개월의 1일 평균급여액:</label>
-        <input type="number" id="averageSalary" name="averageSalary" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)">원<br><br>
+        <input type="number" id="averageSalary" name="averageSalary" value="0" required onfocus="clearDefault(this)" onblur="restoreDefault(this, 0)"><span class="currency">원</span><br><br>
         <label for="insurancePeriod">고용보험 가입 기간:</label>
         <select id="insurancePeriod" name="insurancePeriod" required>
             <option value="1년미만">1년 미만</option>
@@ -53,6 +222,10 @@
 
         async function calculateUnemploymentPay() {
             const averageSalary = parseFloat(document.getElementById('averageSalary').value);
+            if (averageSalary == 0) {
+                alert('평균급여액을 입력해주세요.');
+                return;
+            }
             const insurancePeriod = document.getElementById('insurancePeriod').value;
             const ageGroup = document.getElementById('ageGroup').value;
             const reason = document.getElementById('reason').value;
@@ -94,8 +267,8 @@
                 <h3>실업급여 계산 결과</h3>
                 <p>일일 실업급여: ${dailyUnemploymentPay.toLocaleString()} 원</p>
                 <p>총 실업급여 지급일수: ${unemploymentDays.toLocaleString()} 일</p>
-                <p>총 실업급여 예상액: ${totalUnemploymentPay.toLocaleString()} 원</p>
-                <p>정급여일수는 나이와 고용보험 가입기간에 따라서 최소 120일에서 최대 270일입니다.
+                <p class='pred'>총 실업급여 예상액: ${totalUnemploymentPay.toLocaleString()} 원</p>
+                <p class='small'>정급여일수는 나이와 고용보험 가입기간에 따라서 최소 120일에서 최대 270일입니다.
                 실업(구직) 급여는 원칙적으로 퇴직한 다음날부터 12개월이 경과하면 지급받을 소정급여 일수가 남아있더라도 더 이상 지급 받을 수 없습니다.</p>
             `;
         }
